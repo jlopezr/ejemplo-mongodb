@@ -14,7 +14,7 @@ namespace Classes
 {
     public class DataBase
     {
-        public void AddLog(String address, double value)
+        public void AddLog(String address, double value, double latitude, double longitude, double altitude)
         {
             // This connects to the server
             var connectionString = "mongodb://127.0.0.1";
@@ -26,7 +26,10 @@ namespace Classes
             Entity e = new Entity();
             e.Address = address;
             e.Value = value;
-
+            e.Latitude = latitude;
+            e.Longitude = longitude;
+            e.Altitude = altitude;
+            
             // This adds it to MongoDB
             var collection = database.GetCollection<Entity>("log");
             collection.Insert(e);
@@ -40,7 +43,7 @@ namespace Classes
             var client = new MongoClient(connectionString);
             var server = client.GetServer();
             var database = server.GetDatabase("DatosAereos");
-
+            
             // This loops through the list entered so that every Entity is added
             for (int i = 0; i < LogList.Count; i++)
             {
@@ -48,6 +51,9 @@ namespace Classes
                 Entity e = new Entity();
                 e.Address = LogList.ElementAt(i).Address;
                 e.Value = LogList.ElementAt(i).Value;
+                e.Latitude = LogList.ElementAt(i).Latitude;
+                e.Longitude = LogList.ElementAt(i).Longitude;
+                e.Altitude = LogList.ElementAt(i).Altitude;
 
                 // This adds it to MongoDB
                 var collection = database.GetCollection<Entity>("log");
@@ -71,9 +77,10 @@ namespace Classes
 
             // This sends the results to a list
             var results = resultsCursor.ToList();
-
+            
             // This returns the list
             return results;
+
         }
 
         public List<Entity> SearchByAddress(string address)
@@ -95,7 +102,7 @@ namespace Classes
             // This returns the list
             return results;
         }
-
+        
         public void RemoveAll()
         {
             // This connects to the server and gets the desired collection
@@ -108,5 +115,6 @@ namespace Classes
             // This deletes all the content inside the collection
             collection.RemoveAll();
         }
+
     }
 }
