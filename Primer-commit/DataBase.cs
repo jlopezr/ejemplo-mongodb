@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Driver.Builders;
-using MongoDB.Driver.GridFS;
 using MongoDB.Driver.Linq;
+using GeoJSON;
+using GeoJSON.Net.Geometry;
+using GeoJSON.Net.Converters;
 
 
 namespace Classes
@@ -32,6 +34,7 @@ namespace Classes
             
             // This adds it to MongoDB
             var collection = database.GetCollection<Entity>("log");
+            e.Position = new GeographicPosition(51, 2); // Geo position check
             collection.Insert(e);
             var id = e.Id;
         }
