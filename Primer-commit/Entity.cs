@@ -23,6 +23,10 @@ namespace Classes
             public double Longitude { get; set; }
 
             public double Altitude { get; set; }
+            
+            public IPosition Position { get; set; }
+
+            // DateTime.Now
         }
 
 }
