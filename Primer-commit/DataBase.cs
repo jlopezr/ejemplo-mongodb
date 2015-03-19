@@ -11,12 +11,11 @@ using GeoJSON;
 using GeoJSON.Net.Geometry;
 using GeoJSON.Net.Converters;
 
-
 namespace Classes
 {
     public class DataBase
     {
-        public void AddLog(String address, double value, double latitude, double longitude, double altitude)
+        public void AddLog(String address, double value, double latitude, double longitude)
         {
             // This connects to the server
             var connectionString = "mongodb://127.0.0.1";
@@ -28,13 +27,13 @@ namespace Classes
             Entity e = new Entity();
             e.Address = address;
             e.Value = value;
-            e.Latitude = latitude;
-            e.Longitude = longitude;
-            e.Altitude = altitude;
+            e.Position = new GeographicPosition(latitude, longitude);
+            e.Time = DateTime.Now.AddHours(1);
+            e.SearchTime = (e.Time.Hour-1) * 3600 + e.Time.Minute * 60 + e.Time.Second;
+
             
             // This adds it to MongoDB
-            var collection = database.GetCollection<Entity>("log");
-            e.Position = new GeographicPosition(51, 2); // Geo position check
+            var collection = database.GetCollection<Entity>("log");            
             collection.Insert(e);
             var id = e.Id;
         }
@@ -54,9 +53,8 @@ namespace Classes
                 Entity e = new Entity();
                 e.Address = LogList.ElementAt(i).Address;
                 e.Value = LogList.ElementAt(i).Value;
-                e.Latitude = LogList.ElementAt(i).Latitude;
-                e.Longitude = LogList.ElementAt(i).Longitude;
-                e.Altitude = LogList.ElementAt(i).Altitude;
+                e.Position = LogList.ElementAt(i).Position;
+                e.Time = LogList.ElementAt(i).Time;
 
                 // This adds it to MongoDB
                 var collection = database.GetCollection<Entity>("log");
@@ -75,8 +73,8 @@ namespace Classes
             var collection = database.GetCollection<Entity>("log");
 
             // This creates the query to search for addresses within the desired time interval
-            var query = Query.And(Query.GT("Value", LowTime), Query.LT("Value", HighTime));
-            var resultsCursor = collection.Find(query).SetSortOrder("Value");
+            var query = Query.And(Query.GTE("SearchTime", LowTime), Query.LTE("SearchTime", HighTime));
+            var resultsCursor = collection.Find(query).SetSortOrder("SearchTime");
 
             // This sends the results to a list
             var results = resultsCursor.ToList();
@@ -119,5 +117,17 @@ namespace Classes
             collection.RemoveAll();
         }
 
+        public List<Entity> NearQuery(double Lat, double Long)
+        {
+            // This merges Lat and Long into a GeographicPosition
+            var GeoPos = new GeographicPosition(Lat, Long);
+            // This creates a Point with the coordinates
+            Point pt = new Point(GeoPos);
+            int i = 1;
+            List<Entity> lol = new List<Entity>();
+            return lol;
+        }
+
     }
 }
+
