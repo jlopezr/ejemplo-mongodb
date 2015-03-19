@@ -2,6 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Classes;
+using GeoJSON;
+using GeoJSON.Net.Geometry;
+using GeoJSON.Net.Converters;
 
 namespace MongoDBExample
 {
@@ -15,6 +18,7 @@ namespace MongoDBExample
             Console.WriteLine("Type 3 to research by Time.");
             Console.WriteLine("Type 4 to research by Name.");
             Console.WriteLine("Type 5 to remove all data stored");
+            Console.WriteLine("Type 6 to check proximity");
             
             int choice = Convert.ToInt32(Console.ReadLine());
             
@@ -28,12 +32,10 @@ namespace MongoDBExample
                 double lat = Convert.ToDouble(Console.ReadLine());
                 Console.WriteLine("Enter the longitude.");
                 double lon = Convert.ToDouble(Console.ReadLine());
-                Console.WriteLine("Enter the altitude.");
-                double alt = Convert.ToDouble(Console.ReadLine());
-
+                
                 // This creates the database and executes the AddLog function
                 DataBase db = new DataBase();
-                db.AddLog(address, value, lat, lon, alt);
+                db.AddLog(address, value, lat, lon);
             }
             else if (choice == 2)
             {
@@ -55,13 +57,11 @@ namespace MongoDBExample
                     e.Value = value;
                     Console.WriteLine("Enter the latitude.");
                     double lat = Convert.ToDouble(Console.ReadLine());
-                    e.Latitude = lat;
                     Console.WriteLine("Enter the longitude.");
                     double lon = Convert.ToDouble(Console.ReadLine());
-                    e.Longitude = lon;
-                    Console.WriteLine("Enter the altitude.");
-                    double alt = Convert.ToDouble(Console.ReadLine());
-                    e.Altitude = alt;
+                    e.Position = new GeographicPosition(lat, lon);
+                    e.Time = DateTime.Now.AddHours(1);
+                    e.SearchTime = (e.Time.Hour-1) * 3600 + e.Time.Minute * 60 + e.Time.Second;
 
                     LogList.Add(e);
 
@@ -78,11 +78,19 @@ namespace MongoDBExample
 
             else if (choice == 3)
             {
-                Console.WriteLine("Type the lower value limit");
-                double lowlimit = Convert.ToInt32(Console.ReadLine());
+                Console.WriteLine("Type the lower time limit, in the format of: hour/minute/second");
+                string low = Convert.ToString(Console.ReadLine());
 
-                Console.WriteLine("Type the higher value limit");
-                double highlimit = Convert.ToInt32(Console.ReadLine());
+                string[] lowsum = low.Split('/');
+
+                int lowlimit = Convert.ToInt32(lowsum[0]) * 3600 + Convert.ToInt32(lowsum[1]) * 60 + Convert.ToInt32(lowsum[2]);
+
+                Console.WriteLine("Type the higher value limit, in the format of: hour/minute/second");
+                string high = Convert.ToString(Console.ReadLine());
+
+                string[] highsum = high.Split('/');
+
+                int highlimit = Convert.ToInt32(highsum[0]) * 3600 + Convert.ToInt32(highsum[1]) * 60 + Convert.ToInt32(highsum[2]);
 
                 // This creates the database and executes the SearchByTime function
                 DataBase db = new DataBase();
@@ -96,15 +104,18 @@ namespace MongoDBExample
                     Entity e = new Entity();
                     e.Address = LogList.ElementAt(i).Address;
                     e.Value = LogList.ElementAt(i).Value;
-                    e.Latitude = LogList.ElementAt(i).Latitude;
-                    e.Longitude = LogList.ElementAt(i).Longitude;
-                    e.Altitude = LogList.ElementAt(i).Altitude;
+                    e.Position = LogList.ElementAt(i).Position;
+                    e.Time = LogList.ElementAt(i).Time;
+                    e.SearchTime = LogList.ElementAt(i).SearchTime;
+
+
                     string print1 = Convert.ToString(e.Address);
                     string print2 = Convert.ToString(e.Value);
-                    string print3 = Convert.ToString(e.Latitude);
-                    string print4 = Convert.ToString(e.Longitude);
-                    string print5 = Convert.ToString(e.Altitude);
-                    Console.WriteLine("Address: {0}, Value: {1}, Latitude: {2}, Longitude: {3}, Altitude: {4}", print1, print2, print3, print4, print5);
+                    string print3 = Convert.ToString(e.Position);
+                    string print4 = Convert.ToString(e.Time);
+                    string print5 = Convert.ToString(e.SearchTime);
+
+                    Console.WriteLine("Address: {0}, Value: {1}, Position: {2}, Time: {3}, SearchTime: {4}", print1, print2, print3, print4, print5);
                 }
             }
 
@@ -125,15 +136,17 @@ namespace MongoDBExample
                     Entity e = new Entity();
                     e.Address = LogList.ElementAt(i).Address;
                     e.Value = LogList.ElementAt(i).Value;
-                    e.Latitude = LogList.ElementAt(i).Latitude;
-                    e.Longitude = LogList.ElementAt(i).Longitude;
-                    e.Altitude = LogList.ElementAt(i).Altitude;
+                    e.Position = LogList.ElementAt(i).Position;
+                    e.Time = LogList.ElementAt(i).Time;
+                    e.SearchTime = LogList.ElementAt(i).SearchTime;
+                    
                     string print1 = Convert.ToString(e.Address);
                     string print2 = Convert.ToString(e.Value);
-                    string print3 = Convert.ToString(e.Latitude);
-                    string print4 = Convert.ToString(e.Longitude);
-                    string print5 = Convert.ToString(e.Altitude);
-                    Console.WriteLine("Address: {0}, Value: {1}, Latitude: {2}, Longitude: {3}, Altitude: {4}", print1, print2, print3, print4, print5);
+                    string print3 = Convert.ToString(e.Position);
+                    string print4 = Convert.ToString(e.Time);
+                    string print5 = Convert.ToString(e.SearchTime);
+
+                    Console.WriteLine("Address: {0}, Value: {1}, Position: {2}, Time: {3}, SearchTime: {4}", print1, print2, print3, print4, print5);
                 }
             }
 
@@ -142,6 +155,21 @@ namespace MongoDBExample
                 // This creates the database and executes the RemoveAll function
                 DataBase db = new DataBase();
                 db.RemoveAll();
+            }
+
+            else if (choice == 6)
+            {
+                // The user enters the point to be checked for proximity
+                Console.WriteLine("Insert the point you want to be checked:");
+                Console.WriteLine("Enter its latitude");
+                double latpoint = Convert.ToDouble(Console.ReadLine());
+                Console.WriteLine("Enter its longitude");
+                double longpoint = Convert.ToDouble(Console.ReadLine());
+
+                // A database is initialized and the function to check the MongoDB is executed
+                DataBase db = new DataBase();
+                List<Entity> NearList = db.NearQuery(latpoint, longpoint);
+
             }
         }
     }
