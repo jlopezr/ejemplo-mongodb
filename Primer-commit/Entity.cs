@@ -5,7 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using MongoDB.Bson;
 using MongoDB.Driver;
-
+using GeoJSON;
+using GeoJSON.Net.Geometry;
+using GeoJSON.Net.Converters;
 
 
 namespace Classes
@@ -18,15 +20,13 @@ namespace Classes
 
             public double Value { get; set; }
 
-            public double Latitude { get; set; }
+            public int SearchTime { get; set; }
 
-            public double Longitude { get; set; }
+            public DateTime Time { get; set; }    
 
-            public double Altitude { get; set; }
-            
-            public IPosition Position { get; set; }
+            public GeographicPosition Position { get; set; }
 
-            // DateTime.Now
         }
 
 }
+
