@@ -8,6 +8,7 @@ using MongoDB.Driver;
 using GeoJSON;
 using GeoJSON.Net.Geometry;
 using GeoJSON.Net.Converters;
+using MongoDB.Driver.GeoJsonObjectModel;
 
 
 namespace Classes
@@ -22,9 +23,9 @@ namespace Classes
 
             public int SearchTime { get; set; }
 
-            public DateTime Time { get; set; }    
+            public DateTime Time { get; set; }
 
-            public GeographicPosition Position { get; set; }
+            public GeoJsonPoint<GeoJson2DGeographicCoordinates> Position { get; set; }
 
         }
 

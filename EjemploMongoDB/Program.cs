@@ -5,6 +5,7 @@ using Classes;
 using GeoJSON;
 using GeoJSON.Net.Geometry;
 using GeoJSON.Net.Converters;
+using MongoDB.Driver.GeoJsonObjectModel;
 
 namespace MongoDBExample
 {
@@ -59,7 +60,7 @@ namespace MongoDBExample
                     double lat = Convert.ToDouble(Console.ReadLine());
                     Console.WriteLine("Enter the longitude.");
                     double lon = Convert.ToDouble(Console.ReadLine());
-                    e.Position = new GeographicPosition(lat, lon);
+                    e.Position = new GeoJsonPoint<GeoJson2DGeographicCoordinates>(new GeoJson2DGeographicCoordinates(lat, lon));
                     e.Time = DateTime.Now.AddHours(1);
                     e.SearchTime = (e.Time.Hour-1) * 3600 + e.Time.Minute * 60 + e.Time.Second;
 

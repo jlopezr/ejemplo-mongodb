@@ -10,6 +10,7 @@ using MongoDB.Driver.Linq;
 using GeoJSON;
 using GeoJSON.Net.Geometry;
 using GeoJSON.Net.Converters;
+using MongoDB.Driver.GeoJsonObjectModel;
 
 namespace Classes
 {
@@ -18,7 +19,7 @@ namespace Classes
         public void AddLog(String address, double value, double latitude, double longitude)
         {
             // This connects to the server
-            var connectionString = "mongodb://127.0.0.1";
+            var connectionString = "mongodb://10.211.55.2";
             var client = new MongoClient(connectionString);
             var server = client.GetServer();
             var database = server.GetDatabase("DatosAereos");
@@ -27,7 +28,7 @@ namespace Classes
             Entity e = new Entity();
             e.Address = address;
             e.Value = value;
-            e.Position = new GeographicPosition(latitude, longitude);
+            e.Position = new GeoJsonPoint<GeoJson2DGeographicCoordinates>(new GeoJson2DGeographicCoordinates(latitude, longitude));
             e.Time = DateTime.Now.AddHours(1);
             e.SearchTime = (e.Time.Hour-1) * 3600 + e.Time.Minute * 60 + e.Time.Second;
 
@@ -41,7 +42,7 @@ namespace Classes
         public void AddLogs(List<Entity> LogList)
         {
             // This connects to the server
-            var connectionString = "mongodb://127.0.0.1";
+            var connectionString = "mongodb://10.211.55.2";
             var client = new MongoClient(connectionString);
             var server = client.GetServer();
             var database = server.GetDatabase("DatosAereos");
@@ -66,7 +67,7 @@ namespace Classes
         public List<Entity> SearchByTime(double LowTime, double HighTime)
         {
             // This connects to the server and gets the desired collection
-            var connectionString = "mongodb://127.0.0.1";
+            var connectionString = "mongodb://10.211.55.2";
             var client = new MongoClient(connectionString);
             var server = client.GetServer();
             var database = server.GetDatabase("DatosAereos");
@@ -87,7 +88,7 @@ namespace Classes
         public List<Entity> SearchByAddress(string address)
         {
             // This connects to the server and gets the desired collection
-            var connectionString = "mongodb://127.0.0.1";
+            var connectionString = "mongodb://10.211.55.2";
             var client = new MongoClient(connectionString);
             var server = client.GetServer();
             var database = server.GetDatabase("DatosAereos");
@@ -107,7 +108,7 @@ namespace Classes
         public void RemoveAll()
         {
             // This connects to the server and gets the desired collection
-            var connectionString = "mongodb://127.0.0.1";
+            var connectionString = "mongodb://10.211.55.2";
             var client = new MongoClient(connectionString);
             var server = client.GetServer();
             var database = server.GetDatabase("DatosAereos");
@@ -119,15 +120,24 @@ namespace Classes
 
         public List<Entity> NearQuery(double Lat, double Long)
         {
-            // This merges Lat and Long into a GeographicPosition
-            var GeoPos = new GeographicPosition(Lat, Long);
-            // This creates a Point with the coordinates
-            Point pt = new Point(GeoPos);
-            int i = 1;
-            List<Entity> lol = new List<Entity>();
-            return lol;
-        }
+            // This connects to the server and gets the desired collection
+            var connectionString = "mongodb://10.211.55.2";
+            var client = new MongoClient(connectionString);
+            var server = client.GetServer();
+            var database = server.GetDatabase("DatosAereos");
+            var collection = database.GetCollection<Entity>("log");
 
+            double distance = 1000;
+            var g = new GeoJson2DGeographicCoordinates(Lat, Long);
+
+            var query = Query.Near<GeoJson2DGeographicCoordinates>("Position", new GeoJsonPoint<GeoJson2DGeographicCoordinates>(g), distance);
+            var resultsCursor = collection.Find(query);
+
+            // This sends the results to a list
+            var results = resultsCursor.ToList();
+            return results;
+        }
+       
     }
 }
 
