@@ -20,9 +20,9 @@ namespace MongoDBExample
             Console.WriteLine("Type 4 to research by Name.");
             Console.WriteLine("Type 5 to remove all data stored");
             Console.WriteLine("Type 6 to check proximity");
-            
+
             int choice = Convert.ToInt32(Console.ReadLine());
-            
+
             if (choice == 1)
             {
                 Console.WriteLine("Type an address.");
@@ -33,7 +33,7 @@ namespace MongoDBExample
                 double lat = Convert.ToDouble(Console.ReadLine());
                 Console.WriteLine("Enter the longitude.");
                 double lon = Convert.ToDouble(Console.ReadLine());
-                
+
                 // This creates the database and executes the AddLog function
                 DataBase db = new DataBase();
                 db.AddLog(address, value, lat, lon);
@@ -45,7 +45,7 @@ namespace MongoDBExample
                 int confirmation = 1;
 
                 Console.WriteLine("Add as much paired addresses and values as you want.");
-                
+
                 // This keeps asking the user for address and value until he wants to stop
                 while (confirmation != 0)
                 {
@@ -62,7 +62,7 @@ namespace MongoDBExample
                     double lon = Convert.ToDouble(Console.ReadLine());
                     e.Position = new GeoJsonPoint<GeoJson2DGeographicCoordinates>(new GeoJson2DGeographicCoordinates(lat, lon));
                     e.Time = DateTime.Now.AddHours(1);
-                    e.SearchTime = (e.Time.Hour-1) * 3600 + e.Time.Minute * 60 + e.Time.Second;
+                    e.SearchTime = (e.Time.Hour - 1) * 3600 + e.Time.Minute * 60 + e.Time.Second;
 
                     LogList.Add(e);
 
@@ -140,7 +140,7 @@ namespace MongoDBExample
                     e.Position = LogList.ElementAt(i).Position;
                     e.Time = LogList.ElementAt(i).Time;
                     e.SearchTime = LogList.ElementAt(i).SearchTime;
-                    
+
                     string print1 = Convert.ToString(e.Address);
                     string print2 = Convert.ToString(e.Value);
                     string print3 = Convert.ToString(e.Position);
@@ -171,6 +171,27 @@ namespace MongoDBExample
                 DataBase db = new DataBase();
                 List<Entity> NearList = db.NearQuery(latpoint, longpoint);
 
+                int count = NearList.Count;
+
+                // This prints the results of the function in the console
+                for (int i = 0; i < count; i++)
+                {
+                    Entity e = new Entity();
+                    e.Address = NearList.ElementAt(i).Address;
+                    e.Value = NearList.ElementAt(i).Value;
+                    e.Position = NearList.ElementAt(i).Position;
+                    e.Time = NearList.ElementAt(i).Time;
+                    e.SearchTime = NearList.ElementAt(i).SearchTime;
+
+                    string print1 = Convert.ToString(e.Address);
+                    string print2 = Convert.ToString(e.Value);
+                    string print3 = Convert.ToString(e.Position);
+                    string print4 = Convert.ToString(e.Time);
+                    string print5 = Convert.ToString(e.SearchTime);
+
+                    Console.WriteLine("The points within its established vicinity are:");
+                    Console.WriteLine("Address: {0}, Value: {1}, Position: {2}, Time: {3}, SearchTime: {4}", print1, print2, print3, print4, print5);
+                }
             }
         }
     }

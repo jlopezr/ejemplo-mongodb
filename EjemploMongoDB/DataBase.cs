@@ -16,10 +16,17 @@ namespace Classes
 {
     public class DataBase
     {
+
+        // public Database() {}
+        // This connects to the server
+        //protected string connectionString = "mongodb://10.211.55.2";
+        //protected MongoClient client = new MongoClient(connectionString);
+        //protected MongoServer server = new MongoServer(client.GetServer());
+        //protected MongoDatabase database = new MongoDatabase(server, server.GetDatabase("DatosAereos"));
         public void AddLog(String address, double value, double latitude, double longitude)
         {
             // This connects to the server
-            var connectionString = "mongodb://10.211.55.2";
+            var connectionString = "mongodb://127.0.0.1";
             var client = new MongoClient(connectionString);
             var server = client.GetServer();
             var database = server.GetDatabase("DatosAereos");
@@ -30,11 +37,11 @@ namespace Classes
             e.Value = value;
             e.Position = new GeoJsonPoint<GeoJson2DGeographicCoordinates>(new GeoJson2DGeographicCoordinates(latitude, longitude));
             e.Time = DateTime.Now.AddHours(1);
-            e.SearchTime = (e.Time.Hour-1) * 3600 + e.Time.Minute * 60 + e.Time.Second;
+            e.SearchTime = (e.Time.Hour - 1) * 3600 + e.Time.Minute * 60 + e.Time.Second;
 
-            
+
             // This adds it to MongoDB
-            var collection = database.GetCollection<Entity>("log");            
+            var collection = database.GetCollection<Entity>("log");
             collection.Insert(e);
             var id = e.Id;
         }
@@ -42,11 +49,11 @@ namespace Classes
         public void AddLogs(List<Entity> LogList)
         {
             // This connects to the server
-            var connectionString = "mongodb://10.211.55.2";
+            var connectionString = "mongodb://127.0.0.1";
             var client = new MongoClient(connectionString);
             var server = client.GetServer();
             var database = server.GetDatabase("DatosAereos");
-            
+
             // This loops through the list entered so that every Entity is added
             for (int i = 0; i < LogList.Count; i++)
             {
@@ -67,7 +74,7 @@ namespace Classes
         public List<Entity> SearchByTime(double LowTime, double HighTime)
         {
             // This connects to the server and gets the desired collection
-            var connectionString = "mongodb://10.211.55.2";
+            var connectionString = "mongodb://127.0.0.1";
             var client = new MongoClient(connectionString);
             var server = client.GetServer();
             var database = server.GetDatabase("DatosAereos");
@@ -79,7 +86,7 @@ namespace Classes
 
             // This sends the results to a list
             var results = resultsCursor.ToList();
-            
+
             // This returns the list
             return results;
 
@@ -88,7 +95,7 @@ namespace Classes
         public List<Entity> SearchByAddress(string address)
         {
             // This connects to the server and gets the desired collection
-            var connectionString = "mongodb://10.211.55.2";
+            var connectionString = "mongodb://127.0.0.1";
             var client = new MongoClient(connectionString);
             var server = client.GetServer();
             var database = server.GetDatabase("DatosAereos");
@@ -104,11 +111,11 @@ namespace Classes
             // This returns the list
             return results;
         }
-        
+
         public void RemoveAll()
         {
             // This connects to the server and gets the desired collection
-            var connectionString = "mongodb://10.211.55.2";
+            var connectionString = "mongodb://127.0.0.1";
             var client = new MongoClient(connectionString);
             var server = client.GetServer();
             var database = server.GetDatabase("DatosAereos");
@@ -121,7 +128,7 @@ namespace Classes
         public List<Entity> NearQuery(double Lat, double Long)
         {
             // This connects to the server and gets the desired collection
-            var connectionString = "mongodb://10.211.55.2";
+            var connectionString = "mongodb://127.0.0.1";
             var client = new MongoClient(connectionString);
             var server = client.GetServer();
             var database = server.GetDatabase("DatosAereos");
@@ -137,7 +144,6 @@ namespace Classes
             var results = resultsCursor.ToList();
             return results;
         }
-       
+
     }
 }
-
