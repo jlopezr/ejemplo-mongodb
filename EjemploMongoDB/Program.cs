@@ -60,7 +60,7 @@ namespace MongoDBExample
                     double lat = Convert.ToDouble(Console.ReadLine());
                     Console.WriteLine("Enter the longitude.");
                     double lon = Convert.ToDouble(Console.ReadLine());
-                    e.Position = new GeoJsonPoint<GeoJson2DGeographicCoordinates>(new GeoJson2DGeographicCoordinates(lat, lon));
+                    e.Position = new GeoJsonPoint<GeoJson2DGeographicCoordinates>(new GeoJson2DGeographicCoordinates(lon, lat));
                     e.Time = DateTime.Now.AddHours(1);
                     e.SearchTime = (e.Time.Hour - 1) * 3600 + e.Time.Minute * 60 + e.Time.Second;
 
@@ -112,11 +112,12 @@ namespace MongoDBExample
 
                     string print1 = Convert.ToString(e.Address);
                     string print2 = Convert.ToString(e.Value);
-                    string print3 = Convert.ToString(e.Position);
-                    string print4 = Convert.ToString(e.Time);
-                    string print5 = Convert.ToString(e.SearchTime);
+                    string print3 = Convert.ToString(e.Position.Coordinates.Latitude);
+                    string print4 = Convert.ToString(e.Position.Coordinates.Longitude);
+                    string print5 = Convert.ToString(e.Time);
+                    string print6 = Convert.ToString(e.SearchTime);
 
-                    Console.WriteLine("Address: {0}, Value: {1}, Position: {2}, Time: {3}, SearchTime: {4}", print1, print2, print3, print4, print5);
+                    Console.WriteLine("Address: {0}, Value: {1}, Position: Latitude: {2} Longitude: {3}, Time: {4}, SearchTime: {5}", print1, print2, print3, print4, print5, print6);
                 }
             }
 
@@ -185,12 +186,13 @@ namespace MongoDBExample
 
                     string print1 = Convert.ToString(e.Address);
                     string print2 = Convert.ToString(e.Value);
-                    string print3 = Convert.ToString(e.Position);
-                    string print4 = Convert.ToString(e.Time);
-                    string print5 = Convert.ToString(e.SearchTime);
+                    string print3 = Convert.ToString(e.Position.Coordinates.Latitude);
+                    string print4 = Convert.ToString(e.Position.Coordinates.Longitude);
+                    string print5 = Convert.ToString(e.Time);
+                    string print6 = Convert.ToString(e.SearchTime);
 
                     Console.WriteLine("The points within its established vicinity are:");
-                    Console.WriteLine("Address: {0}, Value: {1}, Position: {2}, Time: {3}, SearchTime: {4}", print1, print2, print3, print4, print5);
+                    Console.WriteLine("Address: {0}, Value: {1}, Position: Latitude: {2} Longitude: {3}, Time: {4}, SearchTime: {5}", print1, print2, print3, print4, print5, print6);
                 }
             }
         }

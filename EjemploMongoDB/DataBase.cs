@@ -17,7 +17,6 @@ namespace Classes
     public class DataBase
     {
 
-        // public Database() {}
         // This connects to the server
         //protected string connectionString = "mongodb://10.211.55.2";
         //protected MongoClient client = new MongoClient(connectionString);
@@ -35,7 +34,7 @@ namespace Classes
             Entity e = new Entity();
             e.Address = address;
             e.Value = value;
-            e.Position = new GeoJsonPoint<GeoJson2DGeographicCoordinates>(new GeoJson2DGeographicCoordinates(latitude, longitude));
+            e.Position = new GeoJsonPoint<GeoJson2DGeographicCoordinates>(new GeoJson2DGeographicCoordinates(longitude, latitude));
             e.Time = DateTime.Now.AddHours(1);
             e.SearchTime = (e.Time.Hour - 1) * 3600 + e.Time.Minute * 60 + e.Time.Second;
 
@@ -135,7 +134,7 @@ namespace Classes
             var collection = database.GetCollection<Entity>("log");
 
             double distance = 1000;
-            var g = new GeoJson2DGeographicCoordinates(Lat, Long);
+            var g = new GeoJson2DGeographicCoordinates(Long, Lat);
 
             var query = Query.Near<GeoJson2DGeographicCoordinates>("Position", new GeoJsonPoint<GeoJson2DGeographicCoordinates>(g), distance);
             var resultsCursor = collection.Find(query);

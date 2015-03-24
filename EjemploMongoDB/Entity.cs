@@ -13,21 +13,20 @@ using MongoDB.Driver.GeoJsonObjectModel;
 
 namespace Classes
 {
-        public class Entity
-        {
-            public ObjectId Id { get; set; }
+    public class Entity
+    {
+        public ObjectId Id { get; set; }
 
-            public string Address { get; set; }
+        public string Address { get; set; }
 
-            public double Value { get; set; }
+        public double Value { get; set; }
 
-            public int SearchTime { get; set; }
+        public int SearchTime { get; set; }
 
-            public DateTime Time { get; set; }
+        public DateTime Time { get; set; }
 
-            public GeoJsonPoint<GeoJson2DGeographicCoordinates> Position { get; set; }
+        public GeoJsonPoint<GeoJson2DGeographicCoordinates> Position { get; set; }
 
-        }
+    }
 
 }
-
